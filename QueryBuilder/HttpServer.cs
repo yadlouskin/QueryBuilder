@@ -1,37 +1,37 @@
-// Filename:  HttpServer.cs        
-// Author:    Benjamin N. Summerton <define-private-public>        
-// License:   Unlicense (http://unlicense.org/)
-
 using System;
 using System.IO;
 using System.Text;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace HttpListenerExample
+namespace QueryBuilder
 {
+    /// <summary>
+    /// Simple HTTP Server using HttpListener
+    /// Entry point to Query Builder application
+    /// </summary>
     class HttpServer
     {
-        public static HttpListener listener;
         public static string url = "http://localhost:8000/";
-        public static int pageViews = 0;
-        public static int requestCount = 0;
-        public static string pageData = 
+        public static string pageData =
             "<!DOCTYPE>" +
             "<html>" +
             "  <head>" +
-            "    <title>HttpListener Example</title>" +
+            "    <title>Query Builder</title>" +
             "  </head>" +
             "  <body>" +
-            "    <p>Page Views: {0}</p>" +
             "    <form method=\"post\" action=\"shutdown\">" +
-            "      <input type=\"submit\" value=\"Shutdown\" {1}>" +
+            "      <input type=\"submit\" value=\"Shutdown\" {0}>" +
             "    </form>" +
             "  </body>" +
             "</html>";
 
-
-        public static async Task HandleIncomingConnections()
+        /// <summary>
+        /// Handle all incoming connections
+        /// </summary>
+        /// <param name="listener">HttpListener instance</param>
+        /// <returns></returns>
+        public static async Task HandleIncomingConnections(HttpListener listener)
         {
             bool runServer = true;
 
@@ -46,27 +46,22 @@ namespace HttpListenerExample
                 HttpListenerResponse resp = ctx.Response;
 
                 // Print out some info about the request
-                Console.WriteLine("Request #: {0}", ++requestCount);
-                Console.WriteLine(req.Url.ToString());
-                Console.WriteLine(req.HttpMethod);
-                Console.WriteLine(req.UserHostName);
-                Console.WriteLine(req.UserAgent);
+                Console.WriteLine(req!.Url!.ToString());
+                Console.WriteLine(req!.HttpMethod);
+                Console.WriteLine(req!.UserHostName);
+                Console.WriteLine(req!.UserAgent);
                 Console.WriteLine();
 
                 // If `shutdown` url requested w/ POST, then shutdown the server after serving the page
-                if ((req.HttpMethod == "POST") && (req.Url.AbsolutePath == "/shutdown"))
+                if ((req is not null) && (req.HttpMethod == "POST") && (req.Url.AbsolutePath == "/shutdown"))
                 {
                     Console.WriteLine("Shutdown requested");
                     runServer = false;
                 }
 
-                // Make sure we don't increment the page views counter if `favicon.ico` is requested
-                if (req.Url.AbsolutePath != "/favicon.ico")
-                    pageViews += 1;
-
                 // Write the response info
                 string disableSubmit = !runServer ? "disabled" : "";
-                byte[] data = Encoding.UTF8.GetBytes(String.Format(pageData, pageViews, disableSubmit));
+                byte[] data = Encoding.UTF8.GetBytes(String.Format(pageData, disableSubmit));
                 resp.ContentType = "text/html";
                 resp.ContentEncoding = Encoding.UTF8;
                 resp.ContentLength64 = data.LongLength;
@@ -77,17 +72,20 @@ namespace HttpListenerExample
             }
         }
 
-
+        /// <summary>
+        /// Entry point to Query Builder application
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             // Create a Http server and start listening for incoming connections
-            listener = new HttpListener();
+            HttpListener listener = new HttpListener();
             listener.Prefixes.Add(url);
             listener.Start();
             Console.WriteLine("Listening for connections on {0}", url);
 
             // Handle requests
-            Task listenTask = HandleIncomingConnections();
+            Task listenTask = HandleIncomingConnections(listener);
             listenTask.GetAwaiter().GetResult();
 
             // Close the listener
