@@ -1,0 +1,7 @@
+## Ignore Visual Studio temporary files and build results
+
+.vscode/
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
