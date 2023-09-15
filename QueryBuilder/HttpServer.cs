@@ -12,7 +12,6 @@ namespace QueryBuilder
     /// </summary>
     class HttpServer
     {
-        public static string url = "http://localhost:8000/";
         public static string pageData =
             "<!DOCTYPE>" +
             "<html>" +
@@ -80,6 +79,7 @@ namespace QueryBuilder
         {
             // Create a Http server and start listening for incoming connections
             HttpListener listener = new HttpListener();
+            string url = Configuration.GetConfiguration().QueryBuilderUrl;
             listener.Prefixes.Add(url);
             listener.Start();
             Console.WriteLine("Listening for connections on {0}", url);
