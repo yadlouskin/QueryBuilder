@@ -12,19 +12,6 @@ namespace QueryBuilder
     /// </summary>
     class HttpServer
     {
-        public static string pageData =
-            "<!DOCTYPE>" +
-            "<html>" +
-            "  <head>" +
-            "    <title>Query Builder</title>" +
-            "  </head>" +
-            "  <body>" +
-            "    <form method=\"post\" action=\"shutdown\">" +
-            "      <input type=\"submit\" value=\"Shutdown\" {0}>" +
-            "    </form>" +
-            "  </body>" +
-            "</html>";
-
         /// <summary>
         /// Handle all incoming connections
         /// </summary>
@@ -32,6 +19,7 @@ namespace QueryBuilder
         /// <returns></returns>
         public static async Task HandleIncomingConnections(HttpListener listener)
         {
+            PageCreator page = new();
             bool runServer = true;
 
             // While a user hasn't visited the `shutdown` url, keep on handling requests
@@ -59,8 +47,8 @@ namespace QueryBuilder
                 }
 
                 // Write the response info
-                string disableSubmit = !runServer ? "disabled" : "";
-                byte[] data = Encoding.UTF8.GetBytes(String.Format(pageData, disableSubmit));
+                string pageData = page.GetPage();
+                byte[] data = Encoding.UTF8.GetBytes(pageData);
                 resp.ContentType = "text/html";
                 resp.ContentEncoding = Encoding.UTF8;
                 resp.ContentLength64 = data.LongLength;
