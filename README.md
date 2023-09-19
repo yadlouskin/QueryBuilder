@@ -1,30 +1,33 @@
 # QueryBuilder
 
+<br />
 
 # Тех задание
 
 На основе Jquery Builder или чего либо другого разработать страницу с возможностью строить запросы Mongodb через визуальную часть.
 
+<br />
 
-
-Случай 1:
+### Случай 1:
 Свойство из класса операция сравнения(=,<,>,<>......) со значением. (BusinessDate = 1 or StoreId > 44)
 
-Случай 2:
+### Случай 2:
 Свойство из коллекции из класса операция сравнения со значением. (Items.LineNum = 1 or Items.ItemFlags.IsQtyPos = false)
 
-Случай 3:
-Свойство Бизнес даты(BusinessDate) операция сравнения с динамическим значением (today, yesterday, this week)
+### Случай 3:
+Свойство Бизнес даты(BusinessDate) операция сравнения с динамическим значением (today, yesterday, this week)\
 (BusinessDate = 'today' но это будет относительно того дня когда оно будет запущено. Если сегодня 05.09.2023 то today должно быть преобразовано в 20230905)
 
-Случай 4:
+### Случай 4:
 Свойство из класса операция сравнения Свойство из класса ("BusinessDate" (equal) "SystemDate")
 
-Случай 5:
+### Случай 5:
 Выражение на основе свойств из класса операция сравнения со значением "Items.RetailPrice" (divided by) “Items.SellingPrice” (greater) “.25”
 
+<br />
 
-
+## Пример данных
+```c#
 public class Sale
 {
     public int BusinessDate { get; set; }
@@ -82,3 +85,4 @@ public class ItemFlags
     public bool IsTaxable { get; set; }
     public bool IsItemCorrect { get; set; }
 }
+```
