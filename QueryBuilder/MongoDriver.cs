@@ -33,8 +33,12 @@ namespace QueryBuilder
         public string GetData(string json)
         {
             //var json = "{ SendId: 4, 'Events.Code' : { $all : [2], $nin : [3] } }";
-            var result = Collection.Find(new QueryDocument(BsonDocument.Parse(json)));
-            var str = string.Join(",<br />", result.ToList());
+            var result = Collection.Find(new QueryDocument(BsonDocument.Parse(json))).ToList();
+            if (result.Count == 0)
+            {
+                return "0 items were found";
+            }
+            var str = "<ol><li>" + string.Join("</li><li>", result) + "</li></ol>";
             return str;
         }
     }

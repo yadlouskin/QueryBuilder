@@ -32,13 +32,22 @@ namespace QueryBuilder
     <h3>Query Builder</h3>
     <div id='builder'></div>
     <button class='btn btn-warning' id='btn-reset'>Reset</button>
-    <button class='btn btn-primary' id='btn-get'>Get Rules</button>
-    <button class='btn btn-primary' id='btn-get-mongo'>Get Query</button>
     <button class='btn btn-success' id='btn-get-data'>Get data from MongoDb</button>
     <br /><br />
     <div>
-      <h3>Data from MongoDb for current query</h3>
+      <h3>Data from MongoDb for current query:</h3>
       <p id='dataFromMongo'></p>
+      <br />
+      <table>
+        <tr>
+          <th style='padding:0px 20px;'><h4>Query:</h4></th>
+          <th style='padding:0px 20px;'><h4>Rules:</h4></th>
+        </tr>
+        <tr>
+          <td id='td_query' style='padding:0px 20px;vertical-align:top;'></td>
+          <td id='td_rules' style='padding:0px 20px;vertical-align:top;'></td>
+        </tr>
+      </table>
     </div>
     <script src='https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
@@ -66,24 +75,18 @@ $('#btn-reset').on('click', function() {
   $('#builder').queryBuilder('reset');
 });
 
-$('#btn-get').on('click', function() {
-  var result = $('#builder').queryBuilder('getRules');
-  
-  if (!$.isEmptyObject(result)) {
-    alert(JSON.stringify(result, null, 2));
-  }
-});
-
-$('#btn-get-mongo').on('click', function() {
-  var result = $('#builder').queryBuilder('getMongo');
-
-  if (!$.isEmptyObject(result)) {
-    alert(JSON.stringify(result, null, 2));
-  }
-});
-
 $('#btn-get-data').on('click', function() {
+  var rules = $('#builder').queryBuilder('getRules');
+  var query = $('#builder').queryBuilder('getMongo');
 
+  if (!$.isEmptyObject(query) && !$.isEmptyObject(rules)) {
+    var beautify = (s) =>
+      JSON.stringify(s, null, '&nbsp;')
+      .replaceAll('\n', '<br />')
+      .replaceAll('&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;');
+    $('#td_query').empty().append(beautify(query));
+    $('#td_rules').empty().append(beautify(rules));
+  }
 });
 
 $('body').click(() => {
