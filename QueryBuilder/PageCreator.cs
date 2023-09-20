@@ -29,13 +29,17 @@ namespace QueryBuilder
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css' />
   </head>
   <body>
+    <h3>Query Builder</h3>
     <div id='builder'></div>
-    <button class='btn btn-primary' id='btn-get'>Get Rules</button>
     <button class='btn btn-warning' id='btn-reset'>Reset</button>
-
-    <form method='post' action='shutdown'>
-      <input type='submit' value='Shutdown'>
-    </form>
+    <button class='btn btn-primary' id='btn-get'>Get Rules</button>
+    <button class='btn btn-primary' id='btn-get-mongo'>Get Query</button>
+    <button class='btn btn-success' id='btn-get-data'>Get data from MongoDb</button>
+    <br /><br />
+    <div>
+      <h3>Data from MongoDb for current query</h3>
+      <p id='dataFromMongo'></p>
+    </div>
     <script src='https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/jquery-extendext@1.0.0/jquery-extendext.min.js'></script>
@@ -68,6 +72,18 @@ $('#btn-get').on('click', function() {
   if (!$.isEmptyObject(result)) {
     alert(JSON.stringify(result, null, 2));
   }
+});
+
+$('#btn-get-mongo').on('click', function() {
+  var result = $('#builder').queryBuilder('getMongo');
+
+  if (!$.isEmptyObject(result)) {
+    alert(JSON.stringify(result, null, 2));
+  }
+});
+
+$('#btn-get-data').on('click', function() {
+
 });
 
 $('body').click(() => {
