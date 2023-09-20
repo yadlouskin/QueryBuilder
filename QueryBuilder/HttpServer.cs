@@ -73,7 +73,10 @@ namespace QueryBuilder
                 }
 
                 // Write the response info
-                string pageData = page.GetPage();
+                DataModel model = new();
+                string filters = model.GetFilters();
+
+                string pageData = page.GetPage(filters: filters);
                 byte[] data = Encoding.UTF8.GetBytes(pageData);
                 resp.ContentType = "text/html";
                 resp.ContentEncoding = Encoding.UTF8;
