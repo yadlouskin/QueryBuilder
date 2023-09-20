@@ -24,7 +24,7 @@ namespace QueryBuilder
 <html>
   <head>
     <title>Query Builder</title>
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css' />
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css' />
   </head>
   <body>
@@ -36,8 +36,8 @@ namespace QueryBuilder
     <form method='post' action='shutdown'>
       <input type='submit' value='Shutdown'>
     </form>
-    <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/jquery-extendext@1.0.0/jquery-extendext.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.min.js'></script>
@@ -63,11 +63,15 @@ var rules = {
   }]
 };
 
+setTimeout(() => {
+  $('[data-toggle=""tooltip""]').tooltip();
+}, 1000);
+
 // const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle=""tooltip""]')
 // const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
 $('#builder').queryBuilder({
-//  plugins: ['bt-tooltip-errors'],
+//  plugins: {'bt-tooltip-errors': { delay: 4000 }},
   
   filters: [{
     id: 'name',
@@ -134,6 +138,11 @@ $('#btn-get').on('click', function() {
     alert(JSON.stringify(result, null, 2));
   }
 });
+
+$('body').click(() => {
+  $('.pull-right').addClass('float-end');
+});
+$('.pull-right').addClass('float-end');
 
     </script>
   </body>
