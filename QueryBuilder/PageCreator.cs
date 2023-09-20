@@ -12,10 +12,11 @@ namespace QueryBuilder
         { }
 
         /// <summary>
-        /// Create HTML page
+        /// Create HTML page using jQuery QueryBuilder
         /// </summary>
+        /// <param name="filters">Filters are created for data model</param>
         /// <returns>HTML page</returns>
-        public string GetPage()
+        public string GetPage(string filters = "{}")
         {
             return
 // TODO: It will be better to create separate HTML and JS files, but right now it is not critical
@@ -29,7 +30,6 @@ namespace QueryBuilder
   </head>
   <body>
     <div id='builder'></div>
-    <button class='btn btn-success' id='btn-set'>Set Rules</button>
     <button class='btn btn-primary' id='btn-get'>Get Rules</button>
     <button class='btn btn-warning' id='btn-reset'>Reset</button>
 
@@ -43,26 +43,6 @@ namespace QueryBuilder
     <script src='https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.min.js'></script>
     <script>
 
-var rules = {
-  condition: 'AND',
-  rules: [{
-    id: 'price',
-    operator: 'less',
-    value: 10.25
-  }, {
-    condition: 'OR',
-    rules: [{
-      id: 'category',
-      operator: 'equal',
-      value: 2
-    }, {
-      id: 'category',
-      operator: 'equal',
-      value: 1
-    }]
-  }]
-};
-
 setTimeout(() => {
   $('[data-toggle=""tooltip""]').tooltip();
 }, 1000);
@@ -73,62 +53,13 @@ setTimeout(() => {
 $('#builder').queryBuilder({
 //  plugins: {'bt-tooltip-errors': { delay: 4000 }},
   
-  filters: [{
-    id: 'name',
-    label: 'Name',
-    type: 'string'
-  }, {
-    id: 'category',
-    label: 'Category',
-    type: 'integer',
-    input: 'select',
-    values: {
-      1: 'Books',
-      2: 'Movies',
-      3: 'Music',
-      4: 'Tools',
-      5: 'Goodies',
-      6: 'Clothes'
-    },
-    operators: ['equal', 'not_equal', 'in', 'not_in', 'is_null', 'is_not_null']
-  }, {
-    id: 'in_stock',
-    label: 'In stock',
-    type: 'integer',
-    input: 'radio',
-    values: {
-      1: 'Yes',
-      0: 'No'
-    },
-    operators: ['equal']
-  }, {
-    id: 'price',
-    label: 'Price',
-    type: 'double',
-    validation: {
-      min: 0,
-      step: 0.01
-    }
-  }, {
-    id: 'id',
-    label: 'Identifier',
-    type: 'string',
-    placeholder: '____-____-____',
-    operators: ['equal', 'not_equal'],
-    validation: {
-      format: /^.{4}-.{4}-.{4}$/
-    }
-  }],
+  filters: [" + filters + @"],
 
-  rules: rules
+  rules: [{empty: true}]
 });
 
 $('#btn-reset').on('click', function() {
   $('#builder').queryBuilder('reset');
-});
-
-$('#btn-set').on('click', function() {
-  $('#builder').queryBuilder('setRules', rules);
 });
 
 $('#btn-get').on('click', function() {
