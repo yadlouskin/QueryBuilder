@@ -24,5 +24,18 @@ namespace QueryBuilder
             Collection = client.GetDatabase(database ?? config.MongoDatabase)
                 .GetCollection<BsonDocument>(collection ?? config.MongoCollection);
         }
+
+        /// <summary>
+        /// Get data from MongoDb using conditions from json variable
+        /// </summary>
+        /// <param name="json">Variable with request conditions</param>
+        /// <returns>String with data, returned from DB</returns>
+        public string GetData(string json)
+        {
+            //var json = "{ SendId: 4, 'Events.Code' : { $all : [2], $nin : [3] } }";
+            var result = Collection.Find(new QueryDocument(BsonDocument.Parse(json)));
+            var str = string.Join(",<br />", result.ToList());
+            return str;
+        }
     }
 }
