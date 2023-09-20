@@ -86,6 +86,11 @@ $('#btn-get-data').on('click', function() {
       .replaceAll('&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;');
     $('#td_query').empty().append(beautify(query));
     $('#td_rules').empty().append(beautify(rules));
+
+    var requestedData = $.post('/getdata', JSON.stringify(query));
+    requestedData.done( (data) => {
+      $('#dataFromMongo').empty().append(data);
+    });
   }
 });
 

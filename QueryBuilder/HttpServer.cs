@@ -39,11 +39,37 @@ namespace QueryBuilder
                 Console.WriteLine(req!.UserAgent);
                 Console.WriteLine();
 
-                // If `shutdown` url requested w/ POST, then shutdown the server after serving the page
-                if ((req is not null) && (req.HttpMethod == "POST") && (req.Url.AbsolutePath == "/shutdown"))
+                // If requested data from MongoDb using post method
+                if ((req is not null)
+                    && (req.HttpMethod == "POST")
+                    && (req.Url.AbsolutePath == "/getdata")
+                    && req.HasEntityBody)
                 {
-                    Console.WriteLine("Shutdown requested");
-                    runServer = false;
+                    // Get body of post request
+                    string jsonbody;
+                    using (System.IO.Stream body = req.InputStream)
+                    {
+                        using (var reader = new System.IO.StreamReader(body, req.ContentEncoding))
+                        {
+                            jsonbody = reader.ReadToEnd();
+                        }
+                    }
+                    Console.WriteLine("Post method for URL /getdata. Body: ", jsonbody);
+
+                    // Get data from MongoDb
+                    MongoDriver driver = new();
+                    string dataFromMongo = driver.GetData(jsonbody);
+                    Console.WriteLine(dataFromMongo);
+
+                    byte[] requestedData = Encoding.UTF8.GetBytes(dataFromMongo);
+                    resp.ContentType = "text/html";
+                    resp.ContentEncoding = Encoding.UTF8;
+                    resp.ContentLength64 = requestedData.LongLength;
+
+                    // Write out to the response stream (asynchronously), then close it
+                    await resp.OutputStream.WriteAsync(requestedData, 0, requestedData.Length);
+                    resp.Close();
+                    continue;
                 }
 
                 // Write the response info
