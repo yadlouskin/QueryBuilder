@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MongoDB.Driver.Linq;
 
 namespace QueryBuilder
 {
@@ -22,17 +23,24 @@ namespace QueryBuilder
         /// <returns>Filters as a string</returns>
         public string GetFilters()
         {
+            TypeHelper typeCity = new(typeof(City));
+            Dictionary<string, string> properties = typeCity.GetProperties();
+            Dictionary<string, List<string>> classifiedProperties = typeCity.GetPropertiesByType();
+
+            foreach (var property in properties)
+            {
+                string name = property.Key;
+                string type = property.Value;
+            }
+
             // Add stub filter to ensure the application works
             if (Filters.Count == 0)
             {
-                return @"{
-                    id: 'name',
-                    label: 'name',
-                    type: 'string'
-                }";
+                return "{id: 'name',\n label: 'name',\n type: 'string'}";
             }
             return string.Join(",", Filters);
         }
+
     }
 
 }
