@@ -32,6 +32,7 @@ namespace QueryBuilder
                 string name = property.Key;
                 string type = property.Value;
                 GenerateFilter(name, type);
+                GenerateFilterWithOptions(name, type, classifiedProperties[type]);
             }
 
             // Add stub filter to ensure the application works
@@ -84,6 +85,29 @@ namespace QueryBuilder
             Filters.Add(filter);
             return true;
         }
+
+        private bool GenerateFilterWithOptions(string name, string type, List<string> options)
+        {
+            string filter = string.Format("{{\n id: '{0}_opt'"
+                + ",\n field: '{0}'"
+                + ",\n label: '{0} with options'"
+                , name);
+
+            filter += ",\n type: 'string'";
+            filter += ",\n input: 'select'";
+            filter += ",\n values: { \n";
+            foreach(string value in options)
+            {
+                filter += string.Format("'{0}':'{0}',\n", value);
+            }
+            filter = filter.Remove(filter.Length - 2, 2);
+
+            filter += "\n}";
+            filter += "\n}";
+            Filters.Add(filter);
+            return true;
+        }
+
 
     }
 
