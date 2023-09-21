@@ -67,4 +67,28 @@ namespace QueryBuilder
 }
 */
 
+    public class City
+    {
+        public string Name { get; set; }
+        public int Population { get; set; }
+        public int CityDate { get; set; }
+        public int BasedDate { get; set; }
+        public List<string> Famous { get; set; } = new List<string>();
+        public Description Structure { get; set; }        
+    }
+
+    public class Description
+    {
+        public short Districsts { get; set; }
+        public string MainStreet { get; set; }
+        public List<River> Rivers { get; set; } = new List<River>();
+    }
+
+    public class River
+    {
+        public string Name { get; set;}
+        public int Length { get; set;}
+        public bool Navigable { get; set; }
+    }
+
 }
