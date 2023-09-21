@@ -33,6 +33,10 @@ namespace QueryBuilder
                 string type = property.Value;
                 GenerateFilter(name, type);
                 GenerateFilterWithOptions(name, type, classifiedProperties[type]);
+                if (type == "Date")
+                {
+                    GenerateFilterForDate(name, type);
+                }
             }
 
             // Add stub filter to ensure the application works
@@ -108,6 +112,33 @@ namespace QueryBuilder
             return true;
         }
 
+        private bool GenerateFilterForDate(string name, string type)
+        {
+            if (type != "Date")
+            {
+                return false;
+            }
+            string filter = string.Format("{{\n id: '{0}_dat'"
+                + ",\n field: '{0}'"
+                + ",\n label: '{0} with Date options'"
+                , name);
+
+            filter += ",\n type: 'integer'";
+            filter += ",\n input: 'select'";
+            filter += ",\n values: { \n";
+
+            var getdate = (DateTime date) => date.Year * 10000 + date.Month * 100 + date.Day;
+            filter += string.Format("{0}:'Today'", getdate(DateTime.Today));
+            filter += string.Format(",\n {0}:'Yesterday'", getdate(DateTime.Today.AddDays(-1)));
+            filter += string.Format(",\n {0}:'Week ago'", getdate(DateTime.Today.AddDays(-7)));
+            filter += string.Format(",\n {0}:'Month ago'", getdate(DateTime.Today.AddMonths(-1)));
+            filter += string.Format(",\n {0}:'Year ago'", getdate(DateTime.Today.AddYears(-1)));
+
+            filter += "\n}";
+            filter += "\n}";
+            Filters.Add(filter);
+            return true;
+        }
 
     }
 
