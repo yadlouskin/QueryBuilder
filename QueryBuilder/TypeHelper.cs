@@ -5,6 +5,79 @@ using System.Reflection;
 namespace QueryBuilder
 {
     /// <summary>
+    /// Class to generate dictionary with properties from Type
+    /// </summary>
+    class TypeHelper
+    {
+        private Dictionary<string, string> AllProperties = new();
+        private string TypeName = "";
+
+        /// <summary>
+        /// Default constructor to build dictionary with properties
+        /// </summary>
+        /// <param name="type">This Type instance will be used to build dictionary</param>
+        public TypeHelper(Type type)
+        {
+            if (type == null)
+            {
+                return;
+            }
+            TypeName = type.FullName;
+            HandleProperties(type.GetProperties());
+        }
+
+        private void HandleProperties(PropertyInfo[] properties, string parentName = "")
+        {
+            foreach (var propertyInfo in properties)
+            {
+                PropertyHelper property = new(propertyInfo);
+                string propertyName = property.GetPropertyName(parentName);
+                if (property.IsSimpleProperty())
+                {
+                    string typeName = property.GetTypeName();
+                    AllProperties.Add(propertyName, typeName);
+                }
+                else
+                {
+                    PropertyInfo[] children = property.GetRelatedProperties();
+                    HandleProperties(children, propertyName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get properties as Dictionary<propertyName, typeName>
+        /// </summary>
+        /// <returns>Dictionary with properties and their types</returns>
+        public Dictionary<string, string> GetProperties()
+        {
+            return AllProperties;
+        }
+
+        /// <summary>
+        /// Get properties classified by type as Dictionary<typeName, List<propertyName>>
+        /// </summary>
+        /// <returns>Dictionary with types as key and list of properties as value</returns>
+        public Dictionary<string, List<string>> GetPropertiesByType()
+        {
+            Dictionary<string, List<string>> result = new();
+            foreach (var property in AllProperties)
+            {
+                string typeName = property.Value;
+                string propertyName = property.Key;
+
+                if (!result.ContainsKey(typeName))
+                {
+                    result.Add(typeName, new List<string>());
+                }
+                result[typeName].Add(property.Key);
+            }
+            return result;
+        }
+    }
+
+
+    /// <summary>
     /// Class to extract property and type names from PropertyInfo
     /// </summary>
     class PropertyHelper
