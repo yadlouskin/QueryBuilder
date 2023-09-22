@@ -32,9 +32,18 @@ namespace QueryBuilder
         /// <returns>String with data, returned from DB</returns>
         public string GetData(string json)
         {
-            //var json = "{ SendId: 4, 'Events.Code' : { $all : [2], $nin : [3] } }";
-            var result = Collection.Find(new QueryDocument(BsonDocument.Parse(json))).ToList();
-            if (result.Count == 0)
+            List<BsonDocument>? result = null;
+            try
+            {
+                //var json = "{ SendId: 4, 'Events.Code' : { $all : [2], $nin : [3] } }";
+                result = Collection.Find(new QueryDocument(BsonDocument.Parse(json))).ToList();
+            }
+            catch(FormatException exception)
+            {
+                Console.WriteLine(exception.ToString());
+                return "FormatException was caught: " + exception.Message;
+            }
+            if (result == null || result.Count == 0)
             {
                 return "0 items were found";
             }
