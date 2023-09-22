@@ -32,7 +32,18 @@ namespace QueryBuilder
                 string name = property.Key;
                 string type = property.Value;
                 GenerateFilter(name, type);
-                GenerateFilterWithOptions(name, type, classifiedProperties[type]);
+                List<string> comparisonProperties = classifiedProperties[type];
+                if (type == "Int16" || type == "Int32")
+                {
+                    // Add possibility to compare short and int properties in UI
+                    // Check that we have such properties in our dictionary
+                    string otherType = type == "Int16" ? "Int32" : "Int16";
+                    if (classifiedProperties.ContainsKey(otherType))
+                    {
+                        comparisonProperties.AddRange(classifiedProperties[otherType]);
+                    }
+                }
+                GenerateFilterWithOptions(name, type, comparisonProperties);
                 if (type == "Date")
                 {
                     GenerateFilterForDate(name, type);
@@ -49,9 +60,9 @@ namespace QueryBuilder
 
         private bool GenerateFilter(string name, string type)
         {
-            string filter = string.Format("{{\n id: '{0}'"
+            string filter = string.Format("{{\n id: '{0}_val'"
                 + ",\n field: '{0}'"
-                + ",\n label: '{0}'"
+                + ",\n label: '{0} (compare with value)'"
                 , name);
 
             // TODO: Add field and create different filters with the same field
@@ -63,6 +74,7 @@ namespace QueryBuilder
 
                 case "Int16":
                     filter += ",\n type: 'integer'";
+                    filter += ",\n validation: {max: 32767, min:-32768}";
                     break;
 
                 case "Bool":
@@ -73,11 +85,12 @@ namespace QueryBuilder
                     break;
 
                 case "Date":
-                    filter += ",\n type: 'date'";
-                    filter += ",\n validation: {format: 'YYYYMMDD'}";
-                    filter += ",\n plugin: 'datepicker'";
-                    filter += ",\n plugin_config: {\n format: 'yyyymmdd', \n" +
-                        "todayBtn: 'linked',\n todayHighlight: true,\n autoclose: true \n}";
+                    string standardFieldName = " field: '" + name + "'";
+                    string dateFieldName = " field: '" + name + "_optDateToUseExpr'";
+                    filter = filter.Replace(standardFieldName, dateFieldName);
+                    filter += ",\n type: 'string'";
+                    filter += ", \n operators: " +
+                        "['equal','not_equal','less','less_or_equal','greater','greater_or_equal']";
                     break;
 
                 default:
@@ -93,8 +106,8 @@ namespace QueryBuilder
         private bool GenerateFilterWithOptions(string name, string type, List<string> options)
         {
             string filter = string.Format("{{\n id: '{0}_opt'"
-                + ",\n field: '{0}'"
-                + ",\n label: '{0} with options'"
+                + ",\n field: '{0}_optFirstToUseExpr'"
+                + ",\n label: '{0} (compare with other properties)'"
                 , name);
 
             filter += ",\n type: 'string'";
@@ -102,11 +115,13 @@ namespace QueryBuilder
             filter += ",\n values: { \n";
             foreach(string value in options)
             {
-                filter += string.Format("'{0}':'{0}',\n", value);
+                filter += string.Format("'{0}_optSecondToUseExpr':'{0}',\n", value);
             }
             filter = filter.Remove(filter.Length - 2, 2);
 
             filter += "\n}";
+            filter += ", \n operators: " +
+                "['equal','not_equal','less','less_or_equal','greater','greater_or_equal']";
             filter += "\n}";
             Filters.Add(filter);
             return true;
@@ -120,7 +135,7 @@ namespace QueryBuilder
             }
             string filter = string.Format("{{\n id: '{0}_dat'"
                 + ",\n field: '{0}'"
-                + ",\n label: '{0} with Date options'"
+                + ",\n label: '{0} (compare with specific date options)'"
                 , name);
 
             filter += ",\n type: 'integer'";
