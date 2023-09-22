@@ -92,6 +92,15 @@ $('#btn-get-data').on('click', function() {
       query = query.replace(optDate[0], newDate);
     }
 
+    query = query.replaceAll(
+      /""([\w\.]+)_optFirstToUseExpr""\:""([\w\.]+)_optSecondToUseExpr""/g,
+      '""\$expr""\:\{""\$eq""\:\[""$$$1"",""$$$2""\]\}'
+    );
+    query = query.replaceAll(
+      /""([\w\.]+)_optFirstToUseExpr""\:\{""\$([a-z]+)""\:""([\w\.]+)_optSecondToUseExpr""\}/g,
+      '""\$expr""\:\{""$$$2""\:\[""$$$1"",""$$$3""\]\}'
+    );
+
     var beautify = (s) =>
       JSON.stringify(s, null, '&nbsp;')
       .replaceAll('\n', '<br />')
