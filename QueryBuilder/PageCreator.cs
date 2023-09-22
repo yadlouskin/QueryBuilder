@@ -80,14 +80,26 @@ $('#btn-get-data').on('click', function() {
   var query = $('#builder').queryBuilder('getMongo');
 
   if (!$.isEmptyObject(query) && !$.isEmptyObject(rules)) {
+    query = JSON.stringify(query)
+    while (optDate = query.match(/_optDateToUseExpr(""\:\{""\$[a-z]+""\:)""(\d+)\/(\d+)\/(\d+)""/)) {
+      newDate = optDate[1] +
+        (parseInt(optDate[4]) * 10000 + parseInt(optDate[3]) * 100 + parseInt(optDate[2]));
+      query = query.replace(optDate[0], newDate);
+    }
+    while (optDate = query.match(/_optDateToUseExpr(""\:)""(\d+)\/(\d+)\/(\d+)""/)) {
+      newDate = optDate[1] +
+        (parseInt(optDate[4]) * 10000 + parseInt(optDate[3]) * 100 + parseInt(optDate[2]));
+      query = query.replace(optDate[0], newDate);
+    }
+
     var beautify = (s) =>
       JSON.stringify(s, null, '&nbsp;')
       .replaceAll('\n', '<br />')
       .replaceAll('&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;');
-    $('#td_query').empty().append(beautify(query));
+    $('#td_query').empty().append(beautify(JSON.parse(query)));
     $('#td_rules').empty().append(beautify(rules));
 
-    var requestedData = $.post('/getdata', JSON.stringify(query));
+    var requestedData = $.post('/getdata', query);
     requestedData.done( (data) => {
       $('#dataFromMongo').empty().append(data);
     });
