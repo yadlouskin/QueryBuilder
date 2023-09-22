@@ -18,12 +18,11 @@ namespace QueryBuilder
         /// <param name="type">This Type instance will be used to build dictionary</param>
         public TypeHelper(Type type)
         {
-            if (type == null)
+            if (type != null)
             {
-                return;
+                TypeName = type.FullName;
+                HandleProperties(type.GetProperties());
             }
-            TypeName = type.FullName;
-            HandleProperties(type.GetProperties());
         }
 
         private void HandleProperties(PropertyInfo[] properties, string parentName = "")
