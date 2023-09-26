@@ -115,10 +115,15 @@ $('#btn-get-data').on('click', function() {
   }
 });
 
+function fixStyle() {
+  $('.pull-right').addClass('float-end').removeClass('pull-right');
+  $('select.form-control').addClass('form-select').removeClass('form-control');
+}
+
 $('body').click(() => {
-  $('.pull-right').addClass('float-end');
+  fixStyle()
 });
-$('.pull-right').addClass('float-end');
+fixStyle()
 
     </script>
   </body>
