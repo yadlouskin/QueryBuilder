@@ -68,7 +68,29 @@ $('#builder').queryBuilder({
   
   filters: [" + filters + @"],
 
-  rules: [{empty: true}]
+  rules: [{empty: true}],
+
+  templates: {
+    filterSelect: function(qb) {
+      let optgroup = null;
+      return `
+<select class=""form-control"" name=""${qb.rule.id}_filter"">
+  ${qb.settings.display_empty_filter ? `
+    <option value=""-1"">${qb.settings.select_placeholder}</option>
+  ` : ''}
+  ${qb.filters.map(filter => `
+    ${optgroup !== filter.optgroup ? `
+      ${optgroup !== null ? `</optgroup>` : ''}
+      ${(optgroup = filter.optgroup) !== null ? `
+        <optgroup label=""${qb.translate(qb.settings.optgroups[optgroup])}"">
+      ` : ''}
+    ` : ''}
+    <option value=""${filter.id}"" ${filter.icon ? `data-icon=""${filter.icon}""` : ''}>${qb.translate(filter.label)}</option>
+  `).join('')}
+  ${optgroup !== null ? '</optgroup>' : ''}
+</select>`;
+    }
+  },
 });
 
 $('#btn-reset').on('click', function() {
