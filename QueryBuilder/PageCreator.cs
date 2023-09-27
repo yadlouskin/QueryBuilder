@@ -63,6 +63,12 @@ setTimeout(() => {
 // const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle=""tooltip""]')
 // const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
+function triggerChanges(rule_id){
+  var elem = $('input[name=' + rule_id + '_value_0]');
+  var inputValue = elem.val();
+  elem.val('').change();
+}
+
 function changeFilter(rule_id){
   $('select[name=' + rule_id + '_filter]').val(-1).change();
   var compType = $('select[name=' + rule_id + '_comptype]').find(':selected').val();
@@ -82,6 +88,47 @@ function changeFilter(rule_id){
       $(this).attr('hidden', true);
     }
   });
+
+
+  var ruleFilter = rule_id + '_filter';
+  var ruleFilterOperator = ruleFilter + '_operator';
+  var ruleFilterSecond = ruleFilter + '_second';
+  var ruleOperator = rule_id + '_operator';
+  var ruleOperatorSecond = ruleOperator + '_second';
+  var chooseByName = (name) => 'select[name=' + name + ']';
+
+  if (compType == '_exp') {
+    var filterOperatorHtml = $.parseHTML(
+      '<select name=""' + ruleFilterOperator + '"" class=""form-select"" onchange=""triggerChanges(\'' + rule_id + '\');"">'
+        + '<option value=""+"">+</option>'
+        + '<option value=""-"">-</option>'
+        + '<option value=""*"">*</option>'
+        + '<option value=""/"">/</option>'
+      + '</select>'
+    );
+    var ruleOperatorHtml = $.parseHTML(
+      '<select name=""' + ruleOperatorSecond + '"" class=""form-select"" onchange=""triggerChanges(\'' + rule_id + '\');"">'
+        + '<option value=""=="">equal</option>'
+        + '<option value=""!="">not equal</option>'
+        + '<option value=""<"">less</option>'
+        + '<option value=""<="">less or equal</option>'
+        + '<option value="">"">greater</option>'
+        + '<option value="">="">greater or equal</option>'
+      + '</select>'
+    );
+
+    $(filterOperatorHtml).insertAfter(chooseByName(ruleFilter));
+    $(chooseByName(ruleFilter)).clone(false)
+      .attr('name', ruleFilterSecond).attr('onchange', 'triggerChanges(\'' + rule_id + '\');')
+      .insertAfter(chooseByName(ruleFilterOperator));
+    $(ruleOperatorHtml).insertAfter(chooseByName(ruleFilterSecond));
+    $('div#' + rule_id).children('div.rule-operator-container').attr('hidden', true);
+  } else {
+    $(chooseByName(ruleFilterOperator)).remove();
+    $(chooseByName(ruleFilterSecond)).remove();
+    $(chooseByName(ruleOperatorSecond)).remove();
+    $('div#' + rule_id).children('div.rule-operator-container').removeAttr('hidden');
+  }
 }
 
 
@@ -103,7 +150,7 @@ $('#builder').queryBuilder({
   <option value=""_val"">Compare with value</option>
   <option value=""_opt"">With other properties</option>
   <option value=""_dat"">With date values</option>
-  <!--<option value=""_exp"">Using expression</option>-->
+  <option value=""_exp"">Using expression</option>
 </select>
 
 <select class=""form-control"" name=""${qb.rule.id}_filter"">

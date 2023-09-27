@@ -48,6 +48,10 @@ namespace QueryBuilder
                 {
                     GenerateFilterForDate(name, type);
                 }
+                if (type == "Int16" || type == "Int32")
+                {
+                    GenerateFilterForExpression(name, type);
+                }
             }
 
             // Add stub filter to ensure the application works
@@ -155,6 +159,43 @@ namespace QueryBuilder
             return true;
         }
 
+        private bool GenerateFilterForExpression(string name, string type)
+        {
+            if (type != "Int16" && type != "Int32")
+            {
+                return false;
+            }
+            string filter = string.Format("{{\n id: '{0}_exp'"
+                + ",\n field: '$where'"
+                + ",\n label: '{0}'"
+                , name);
+
+            filter += ",\n type: 'string'";
+            filter += @",
+valueGetter: function(rule) {
+    var ruleFilter = rule.id + '_filter';
+    var ruleFilterOperator = ruleFilter + '_operator';
+    var ruleFilterSecond = ruleFilter + '_second';
+    var ruleComparisonOperator = rule.id + '_operator_second';
+    var ruleValue = rule.id + '_value_0';
+    var chooseByName = (name) => 'select[name=' + name + ']';
+
+    var propertyFilterName = $(chooseByName(ruleFilter) + ' :selected').text();
+    var arithmeticOperatorName = $(chooseByName(ruleFilterOperator)).val();
+    var propertyFilterSecondName = $(chooseByName(ruleFilterSecond) + ' :selected').text();
+    var comparisonOperatorName = $(chooseByName(ruleComparisonOperator)).val();
+    var inputValue = $('input[name=' + ruleValue + ']').val();
+
+    return 'this.' + propertyFilterName + arithmeticOperatorName
+        + 'this.' + propertyFilterSecondName + comparisonOperatorName + inputValue;
+}";
+            filter += ", \n operators: ['equal']";
+            filter += ",\n default_operator: 'equal'";
+
+            filter += "\n}";
+            Filters.Add(filter);
+            return true;
+        }
     }
 
 }
