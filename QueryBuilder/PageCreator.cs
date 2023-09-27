@@ -172,6 +172,9 @@ $('#btn-get-data').on('click', function() {
 function fixStyle() {
   $('.pull-right').addClass('float-end').removeClass('pull-right');
   $('select.form-control').addClass('form-select').removeClass('form-control');
+  $('.form-select').css('display', 'inline-block');
+  $('.form-select').css('width', 'auto');
+  $('.form-select').css('padding', '.375rem 2.25rem .375rem .75rem');
 }
 
 $('body').click(() => {
