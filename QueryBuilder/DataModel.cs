@@ -62,7 +62,7 @@ namespace QueryBuilder
         {
             string filter = string.Format("{{\n id: '{0}_val'"
                 + ",\n field: '{0}'"
-                + ",\n label: '{0} (compare with value)'"
+                + ",\n label: '{0}'"
                 , name);
 
             // TODO: Add field and create different filters with the same field
@@ -107,7 +107,7 @@ namespace QueryBuilder
         {
             string filter = string.Format("{{\n id: '{0}_opt'"
                 + ",\n field: '{0}_optFirstToUseExpr'"
-                + ",\n label: '{0} (compare with other properties)'"
+                + ",\n label: '{0}'"
                 , name);
 
             filter += ",\n type: 'string'";
@@ -135,7 +135,7 @@ namespace QueryBuilder
             }
             string filter = string.Format("{{\n id: '{0}_dat'"
                 + ",\n field: '{0}'"
-                + ",\n label: '{0} (compare with specific date options)'"
+                + ",\n label: '{0}'"
                 , name);
 
             filter += ",\n type: 'integer'";
