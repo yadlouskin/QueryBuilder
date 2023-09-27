@@ -38,10 +38,10 @@ namespace QueryBuilder
                 //var json = "{ SendId: 4, 'Events.Code' : { $all : [2], $nin : [3] } }";
                 result = Collection.Find(new QueryDocument(BsonDocument.Parse(json))).ToList();
             }
-            catch(FormatException exception)
+            catch(Exception exception)
             {
                 Console.WriteLine(exception.ToString());
-                return "FormatException was caught: " + exception.Message;
+                return "Exception was caught: " + exception.Message;
             }
             if (result == null || result.Count == 0)
             {
