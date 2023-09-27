@@ -63,6 +63,28 @@ setTimeout(() => {
 // const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle=""tooltip""]')
 // const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
+function changeFilter(rule_id){
+  $('select[name=' + rule_id + '_filter]').val(-1).change();
+  var compType = $('select[name=' + rule_id + '_comptype]').find(':selected').val();
+
+  $('select[name=' + rule_id + '_filter]').children().each(function() {
+    var attrHidden = $(this).attr('hidden');
+    var optionValue = $(this).attr('value');
+
+    var hasHidden = typeof attrHidden !== 'undefined' && attrHidden !== false;
+    var needRemove = hasHidden && optionValue != -1 && optionValue.endsWith(compType);
+    var needAdd = !hasHidden && optionValue != -1 && !optionValue.endsWith(compType);
+
+    if (needRemove){
+      $(this).removeAttr('hidden');
+    }
+    if (needAdd){
+      $(this).attr('hidden', true);
+    }
+  });
+}
+
+
 $('#builder').queryBuilder({
 //  plugins: {'bt-tooltip-errors': { delay: 4000 }},
   
@@ -73,10 +95,20 @@ $('#builder').queryBuilder({
   templates: {
     filterSelect: function(qb) {
       let optgroup = null;
+
       return `
+<!--<label for=""${qb.rule.id}_comptype"" class=""form-label"">Compare property with</label>-->
+<select name=""${qb.rule.id}_comptype"" class=""form-select"" onchange=""changeFilter('${qb.rule.id}');"">
+  <option value=""-1"">Choose comparison type</option>
+  <option value=""_val"">Compare with value</option>
+  <option value=""_opt"">With other properties</option>
+  <option value=""_dat"">With date values</option>
+  <!--<option value=""_exp"">Using expression</option>-->
+</select>
+
 <select class=""form-control"" name=""${qb.rule.id}_filter"">
   ${qb.settings.display_empty_filter ? `
-    <option value=""-1"">${qb.settings.select_placeholder}</option>
+    <option value=""-1"">Choose property</option>
   ` : ''}
   ${qb.filters.map(filter => `
     ${optgroup !== filter.optgroup ? `
@@ -85,7 +117,7 @@ $('#builder').queryBuilder({
         <optgroup label=""${qb.translate(qb.settings.optgroups[optgroup])}"">
       ` : ''}
     ` : ''}
-    <option value=""${filter.id}"" ${filter.icon ? `data-icon=""${filter.icon}""` : ''}>${qb.translate(filter.label)}</option>
+    <option value=""${filter.id}"" ${filter.icon ? `data-icon=""${filter.icon}""` : ''} hidden>${qb.translate(filter.label)}</option>
   `).join('')}
   ${optgroup !== null ? '</optgroup>' : ''}
 </select>`;
