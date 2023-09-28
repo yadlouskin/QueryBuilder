@@ -181,6 +181,38 @@ var saved_rules = [{empty: true}];
 
 $('#btn-set').on('click', function() {
   $('#builder').queryBuilder('setRules', saved_rules);
+
+  $('select').each(function() {
+    var isFilterSelect = $(this).attr('name').endsWith('_filter');
+    if (isFilterSelect) {
+      var rule_id = $(this).attr('name').replace('_filter', '');
+      var compType = $(this).find(':selected').val();
+      compType = compType.substr(compType.length - 4);
+
+      var compTypeCond = 'select[name=' + rule_id + '_comptype]';
+      var onChangeValue = $(compTypeCond).attr('onchange');
+      $(compTypeCond).removeAttr('onchange');
+      $(compTypeCond).val(compType).change();
+      $(compTypeCond).attr('onchange', onChangeValue);
+
+      $(this).children().each(function() {
+        var attrHidden = $(this).attr('hidden');
+        var optionValue = $(this).attr('value');
+
+        var hasHidden = typeof attrHidden !== 'undefined' && attrHidden !== false;
+        var needRemove = hasHidden && optionValue != -1 && optionValue.endsWith(compType);
+        var needAdd = !hasHidden && optionValue != -1 && !optionValue.endsWith(compType);
+
+        if (needRemove){
+          $(this).removeAttr('hidden');
+        }
+        if (needAdd){
+          $(this).attr('hidden', true);
+        }
+      });
+    }
+  });
+
 });
 
 $('#btn-get').on('click', function() {
