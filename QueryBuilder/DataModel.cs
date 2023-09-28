@@ -27,28 +27,33 @@ namespace QueryBuilder
             Dictionary<string, string> properties = typeCity.GetProperties();
             Dictionary<string, List<string>> classifiedProperties = typeCity.GetPropertiesByType();
 
+            classifiedProperties.Add("Integer", new List<string>());
+            List<string> integerTypes = new List<string> {"Int16", "Int32", "Decimal"};
+            foreach(string type in integerTypes)
+            {
+                if (classifiedProperties.ContainsKey(type))
+                {
+                    classifiedProperties["Integer"].AddRange(classifiedProperties[type]);
+                }
+            }
+
             foreach (var property in properties)
             {
                 string name = property.Key;
                 string type = property.Value;
                 GenerateFilter(name, type);
                 List<string> comparisonProperties = classifiedProperties[type];
-                if (type == "Int16" || type == "Int32")
+                if (integerTypes.Contains(type))
                 {
-                    // Add possibility to compare short and int properties in UI
-                    // Check that we have such properties in our dictionary
-                    string otherType = type == "Int16" ? "Int32" : "Int16";
-                    if (classifiedProperties.ContainsKey(otherType))
-                    {
-                        comparisonProperties.AddRange(classifiedProperties[otherType]);
-                    }
+                    // Add possibility to compare short, int and decimal properties in UI
+                    comparisonProperties = classifiedProperties["Integer"];
                 }
                 GenerateFilterWithOptions(name, type, comparisonProperties);
                 if (type == "Date")
                 {
                     GenerateFilterForDate(name, type);
                 }
-                if (type == "Int16" || type == "Int32")
+                if (integerTypes.Contains(type))
                 {
                     GenerateFilterForExpression(name, type);
                 }
@@ -79,6 +84,10 @@ namespace QueryBuilder
                 case "Int16":
                     filter += ",\n type: 'integer'";
                     filter += ",\n validation: {max: 32767, min:-32768}";
+                    break;
+
+                case "Decimal":
+                    filter += ",\n type: 'double'";
                     break;
 
                 case "Bool":
@@ -161,7 +170,7 @@ namespace QueryBuilder
 
         private bool GenerateFilterForExpression(string name, string type)
         {
-            if (type != "Int16" && type != "Int32")
+            if (type != "Int16" && type != "Int32" && type != "Decimal")
             {
                 return false;
             }

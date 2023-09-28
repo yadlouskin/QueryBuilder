@@ -81,7 +81,7 @@ namespace QueryBuilder
     /// </summary>
     class PropertyHelper
     {
-        private List<string> KnownTypes = new() { "String", "Int16", "Int32", "Boolean", "Date" };
+        private List<string> KnownTypes = new() { "String", "Int16", "Int32", "Boolean", "Date", "Decimal" };
         private Type TypeDefinition;
         private string TypeName;
         private string PropertyName;
