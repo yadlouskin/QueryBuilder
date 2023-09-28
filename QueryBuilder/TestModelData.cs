@@ -23,7 +23,11 @@ namespace QueryBuilder
                 Navigable: false
             }
         ]
-    }
+    },
+    Field1: 'the same value',
+    Field2: 'the same value',
+    FieldDec1: NumberDecimal('30'),
+    FieldDec2: NumberDecimal('1.5')
 },{
     Name: "Brest",
     Population: 340000,
@@ -45,7 +49,11 @@ namespace QueryBuilder
                 Navigable: true
             }
         ]
-    }
+    },
+    Field1: 'the same value',
+    Field2: 'the same value2',
+    FieldDec1: NumberDecimal('50'),
+    FieldDec2: NumberDecimal('2.5')
 },{
     Name: "Vitebsk",
     Population: 360000,
@@ -63,7 +71,11 @@ namespace QueryBuilder
                 Navigable: true
             }
         ]
-    }
+    },
+    Field1: 'the same value',
+    Field2: 'the same value2',
+    FieldDec1: NumberDecimal('40'),
+    FieldDec2: NumberDecimal('40')
 }
 */
 
@@ -75,6 +87,10 @@ namespace QueryBuilder
         public int BasedDate { get; set; }
         public List<string> Famous { get; set; } = new List<string>();
         public Description Structure { get; set; }        
+        public string Field1 { get; set; }
+        public string Field2 { get; set; }
+        public decimal FieldDec1 { get; set; }
+        public decimal FieldDec2 { get; set; }
     }
 
     public class Description
