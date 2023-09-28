@@ -175,7 +175,7 @@ namespace QueryBuilder
                 return false;
             }
             string filter = string.Format("{{\n id: '{0}_exp'"
-                + ",\n field: '$where'"
+                + ",\n field: '$expr'"
                 + ",\n label: '{0}'"
                 , name);
 
@@ -195,8 +195,13 @@ valueGetter: function(rule) {
     var comparisonOperatorName = $(chooseByName(ruleComparisonOperator)).val();
     var inputValue = $('input[name=' + ruleValue + ']').val();
 
-    return 'this.' + propertyFilterName + arithmeticOperatorName
-        + 'this.' + propertyFilterSecondName + comparisonOperatorName + inputValue;
+//{ $eq: [ {$divide: [""$Population"", ""$Structure.Districsts""]}, 20] }
+    return '{""$' + comparisonOperatorName
+        + '"":[{""$' + arithmeticOperatorName
+        + '"":[""$' + propertyFilterName
+        + '"",""$' + propertyFilterSecondName
+        + '""]},' + inputValue
+        + ']}';
 }";
             filter += ", \n operators: ['equal']";
             filter += ",\n default_operator: 'equal'";

@@ -100,20 +100,20 @@ function changeFilter(rule_id){
   if (compType == '_exp') {
     var filterOperatorHtml = $.parseHTML(
       '<select name=""' + ruleFilterOperator + '"" class=""form-select"" onchange=""triggerChanges(\'' + rule_id + '\');"">'
-        + '<option value=""+"">+</option>'
-        + '<option value=""-"">-</option>'
-        + '<option value=""*"">*</option>'
-        + '<option value=""/"">/</option>'
+        + '<option value=""add"">+</option>'
+        + '<option value=""subtract"">-</option>'
+        + '<option value=""multiply"">*</option>'
+        + '<option value=""divide"">/</option>'
       + '</select>'
     );
     var ruleOperatorHtml = $.parseHTML(
       '<select name=""' + ruleOperatorSecond + '"" class=""form-select"" onchange=""triggerChanges(\'' + rule_id + '\');"">'
-        + '<option value=""=="">equal</option>'
-        + '<option value=""!="">not equal</option>'
-        + '<option value=""<"">less</option>'
-        + '<option value=""<="">less or equal</option>'
-        + '<option value="">"">greater</option>'
-        + '<option value="">="">greater or equal</option>'
+        + '<option value=""eq"">equal</option>'
+        + '<option value=""ne"">not equal</option>'
+        + '<option value=""lt"">less</option>'
+        + '<option value=""lte"">less or equal</option>'
+        + '<option value=""gt"">greater</option>'
+        + '<option value=""gte"">greater or equal</option>'
       + '</select>'
     );
 
@@ -200,6 +200,11 @@ $('#btn-get-data').on('click', function() {
     query = query.replaceAll(
       /""([\w\.]+)_optFirstToUseExpr""\:\{""\$([a-z]+)""\:""([\w\.]+)_optSecondToUseExpr""\}/g,
       '""\$expr""\:\{""$$$2""\:\[""$$$1"",""$$$3""\]\}'
+    );
+    //   {""$expr"":""{\""$eq\"":[{\""$divide\"":[\""$FieldDec1\"",\""$FieldDec2\""]},20]}""}
+    query = query.replaceAll(
+      /\{""(\$expr)""\:""\{\\""(\$[a-z]+)\\""\:\[\{\\""(\$[a-z]+)\\""\:\[\\""(\$[\w\.]+)\\"",\\""(\$[\w\.]+)\\""\]\},(\d+|\d+\.?\d+)\]\}""\}/g,
+      '\{""$1""\:\{""$2""\:\[\{""$3""\:\[""$4"",""$5""\]\},$6\]\}\}'
     );
 
     var beautify = (s) =>
