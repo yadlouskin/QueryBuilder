@@ -226,15 +226,48 @@ valueSetter: function(rule, value) {
         var propertyFilterName = values[3];
         var propertyFilterSecondName = values[4];
         var inputValue = values[5];
+        var onChangeValue = 'triggerChanges(\'' + rule.id + '\');';
 
-        $(chooseByName(comparisonType)).val('_exp').change();
-        $(chooseByName(ruleFilter)).val(propertyFilterName + '_exp').change();
+
+        var filterOperatorHtml = $.parseHTML(
+        '<select name=""' + ruleFilterOperator + '"" class=""form-select"" >'
+            + '<option value=""add"">+</option>'
+            + '<option value=""subtract"">-</option>'
+            + '<option value=""multiply"">*</option>'
+            + '<option value=""divide"">/</option>'
+        + '</select>'
+        );
+        var ruleOperatorHtml = $.parseHTML(
+        '<select name=""' + ruleComparisonOperator + '"" class=""form-select"" >'
+            + '<option value=""eq"">equal</option>'
+            + '<option value=""ne"">not equal</option>'
+            + '<option value=""lt"">less</option>'
+            + '<option value=""lte"">less or equal</option>'
+            + '<option value=""gt"">greater</option>'
+            + '<option value=""gte"">greater or equal</option>'
+        + '</select>'
+        );
+
+        $(filterOperatorHtml).insertAfter(chooseByName(ruleFilter));
+        $(chooseByName(ruleFilter)).clone(false)
+            .attr('name', ruleFilterSecond)
+            .insertAfter(chooseByName(ruleFilterOperator));
+        $(ruleOperatorHtml).insertAfter(chooseByName(ruleFilterSecond));
+        $('div#' + rule.id).children('div.rule-operator-container').attr('hidden', true);
+
         $(chooseByName(ruleFilterSecond)).val(propertyFilterSecondName + '_exp').change();
         $(chooseByName(ruleFilterOperator)).val(arithmeticOperatorName).change();
         $(chooseByName(ruleComparisonOperator)).val(comparisonOperatorName).change();
-        $(chooseByName(ruleOperator)).val('equal').change();
         rule.$el.find('.rule-value-container [name$=_0]').val(inputValue).trigger('change');
-//        $('input[name=' + ruleValue + ']').val(inputValue).trigger('change');
+
+        $(chooseByName(ruleFilterSecond)).attr('onchange', onChangeValue);
+        $(chooseByName(ruleFilterOperator)).attr('onchange', onChangeValue);
+        $(chooseByName(ruleComparisonOperator)).attr('onchange', onChangeValue);
+
+        // $(chooseByName(comparisonType)).val('_exp').change();
+        // $(chooseByName(ruleFilter)).val(propertyFilterName + '_exp').change();
+        // $(chooseByName(ruleOperator)).val('equal').change();
+        // $('input[name=' + ruleValue + ']').val(inputValue).change();
     }
 }";
             filter += ", \n operators: ['equal']";

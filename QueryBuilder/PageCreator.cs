@@ -183,9 +183,10 @@ $('#btn-set').on('click', function() {
   $('#builder').queryBuilder('setRules', saved_rules);
 
   $('select').each(function() {
-    var isFilterSelect = $(this).attr('name').endsWith('_filter');
+    var isFilterSelect = $(this).attr('name').endsWith('_filter')
+      || $(this).attr('name').endsWith('_filter_second');
     if (isFilterSelect) {
-      var rule_id = $(this).attr('name').replace('_filter', '');
+      var rule_id = $(this).attr('name').replace('_filter', '').replace('_second', '');
       var compType = $(this).find(':selected').val();
       compType = compType.substr(compType.length - 4);
 
