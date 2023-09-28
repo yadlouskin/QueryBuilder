@@ -203,6 +203,40 @@ valueGetter: function(rule) {
         + '""]},' + inputValue
         + ']}';
 }";
+            filter += @",
+valueSetter: function(rule, value) {
+    if (rule.operator.nb_inputs > 0) {
+        var ruleFilter = rule.id + '_filter';
+        var ruleOperator = rule.id + '_operator';
+        var comparisonType = rule.id + '_comptype';
+        var ruleFilterOperator = ruleFilter + '_operator';
+        var ruleFilterSecond = ruleFilter + '_second';
+        var ruleComparisonOperator = rule.id + '_operator_second';
+        var ruleValue = rule.id + '_value_0';
+        var chooseByName = (name) => 'select[name=' + name + ']';
+
+        //   \{""$eq"":[{""$divide"":[""$FieldDec1"",""$FieldDec2""]},20]}
+        //   \{""$1""\:\[\{""$2""\:\[""$3"",""$4""\]\},$5\]\}
+        var values = value.match(
+            /\{""\$([a-z]+)""\:\[\{""\$([a-z]+)""\:\[""\$([\w\.]+)"",""\$([\w\.]+)""\]\},(\d+|\d+\.?\d+)\]\}/
+        );
+
+        var comparisonOperatorName = values[1];
+        var arithmeticOperatorName = values[2];
+        var propertyFilterName = values[3];
+        var propertyFilterSecondName = values[4];
+        var inputValue = values[5];
+
+        $(chooseByName(comparisonType)).val('_exp').change();
+        $(chooseByName(ruleFilter)).val(propertyFilterName + '_exp').change();
+        $(chooseByName(ruleFilterSecond)).val(propertyFilterSecondName + '_exp').change();
+        $(chooseByName(ruleFilterOperator)).val(arithmeticOperatorName).change();
+        $(chooseByName(ruleComparisonOperator)).val(comparisonOperatorName).change();
+        $(chooseByName(ruleOperator)).val('equal').change();
+        rule.$el.find('.rule-value-container [name$=_0]').val(inputValue).trigger('change');
+//        $('input[name=' + ruleValue + ']').val(inputValue).trigger('change');
+    }
+}";
             filter += ", \n operators: ['equal']";
             filter += ",\n default_operator: 'equal'";
 

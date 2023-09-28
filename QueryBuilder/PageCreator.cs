@@ -32,6 +32,8 @@ namespace QueryBuilder
     <h3>Query Builder</h3>
     <div id='builder'></div>
     <button class='btn btn-warning' id='btn-reset'>Reset</button>
+    <button class='btn btn-success' id='btn-set'>Use saved Rules</button>
+    <button class='btn btn-primary' id='btn-get'>Save Rules</button>
     <button class='btn btn-success' id='btn-get-data'>Get data from MongoDb</button>
     <br /><br />
     <div>
@@ -131,7 +133,6 @@ function changeFilter(rule_id){
   }
 }
 
-
 $('#builder').queryBuilder({
 //  plugins: {'bt-tooltip-errors': { delay: 4000 }},
   
@@ -174,6 +175,20 @@ $('#builder').queryBuilder({
 
 $('#btn-reset').on('click', function() {
   $('#builder').queryBuilder('reset');
+});
+
+var saved_rules = [{empty: true}];
+
+$('#btn-set').on('click', function() {
+  $('#builder').queryBuilder('setRules', saved_rules);
+});
+
+$('#btn-get').on('click', function() {
+  var result = $('#builder').queryBuilder('getRules');
+
+  if (!$.isEmptyObject(result)) {
+    saved_rules = result;
+  }
 });
 
 $('#btn-get-data').on('click', function() {
