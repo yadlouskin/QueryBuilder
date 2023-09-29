@@ -104,6 +104,14 @@ namespace QueryBuilder
                     filter += ",\n type: 'string'";
                     filter += ", \n operators: " +
                         "['equal','not_equal','less','less_or_equal','greater','greater_or_equal']";
+
+                    filter += ",\n validation: {";
+                    filter += "\n  format: ";
+                    filter += "/^(3[01]|[12][0-9]|0?[1-9])\\/(1[0-2]|0?[1-9])\\/[0-9]{4}$/";
+                    filter += ",\n  messages: {";
+                    filter += "\n    format: 'Use dd/mm/yyyy format for date'";
+                    filter += "\n  }";
+                    filter += "\n}";
                     break;
 
                 default:
@@ -180,6 +188,15 @@ namespace QueryBuilder
                 , name);
 
             filter += ",\n type: 'string'";
+
+            filter += ",\n validation: {";
+            filter += "\n  format: ";
+            filter += @"/^\{""\$([a-z]+)""\:\[\{""\$([a-z]+)""\:\[""\$([\w\.]+)"",""\$([\w\.]+)""\]\},(\d+|\d+\.?\d+)\]\}$/";
+            filter += ",\n  messages: {";
+            filter += "\n    format: 'Make sure you select all fields and enter an integer or floating point number in the input field.'";
+            filter += "\n  }";
+            filter += "\n}";
+
             filter += @",
 valueGetter: function(rule) {
     var ruleFilter = rule.id + '_filter';
@@ -193,7 +210,7 @@ valueGetter: function(rule) {
     var arithmeticOperatorName = $(chooseByName(ruleFilterOperator)).val();
     var propertyFilterSecondName = $(chooseByName(ruleFilterSecond) + ' :selected').text();
     var comparisonOperatorName = $(chooseByName(ruleComparisonOperator)).val();
-    var inputValue = $('input[name=' + ruleValue + ']').val();
+    var inputValue = parseFloat($('input[name=' + ruleValue + ']').val());
 
 //{ $eq: [ {$divide: [""$Population"", ""$Structure.Districsts""]}, 20] }
     return '{""$' + comparisonOperatorName
@@ -225,7 +242,7 @@ valueSetter: function(rule, value) {
         var arithmeticOperatorName = values[2];
         var propertyFilterName = values[3];
         var propertyFilterSecondName = values[4];
-        var inputValue = values[5];
+        var inputValue = parseFloat(values[5]);
         var onChangeValue = 'triggerChanges(\'' + rule.id + '\');';
 
 
